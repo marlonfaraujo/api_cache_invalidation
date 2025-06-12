@@ -1,0 +1,6 @@
+@CacheInvalidation.Api_HostAddress = http://localhost:5017
+
+GET {{CacheInvalidation.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
