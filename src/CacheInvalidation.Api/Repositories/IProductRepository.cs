@@ -1,6 +1,6 @@
 ﻿using CacheInvalidation.Api.Entities;
 
-namespace CacheInvalidation.Api
+namespace CacheInvalidation.Api.Repositories
 {
     public interface IProductRepository
     {

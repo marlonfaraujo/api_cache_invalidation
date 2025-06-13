@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="35.6.3" />
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
@@ -15,11 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit" />
+    <ProjectReference Include="..\..\src\CacheInvalidation.Api\CacheInvalidation.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>
