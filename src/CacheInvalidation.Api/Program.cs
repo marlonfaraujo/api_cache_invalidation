@@ -24,10 +24,12 @@ public partial class Program
         builder.Services.AddScoped<ListProduct>();
         builder.Services.AddScoped<ListCachedProduct>();
         builder.Services.AddScoped<UpdateProduct>();
+        builder.Services.AddTransient<INotificationHandler<ProductActivedEvent>, ProductActivedEventHandler>();
         builder.Services.AddTransient<INotificationHandler<ProductCreatedEvent>, ProductCreatedEventHandler>();
+        builder.Services.AddTransient<INotificationHandler<ProductDisabledEvent>, ProductDisabledEventHandler>();
         builder.Services.AddTransient<INotificationHandler<ProductUpdatedEvent>, ProductUpdatedEventHandler>();
-        builder.Services.AddTransient<NotificationPublisher<ProductCreatedEvent>>();
         builder.Services.AddTransient<NotificationPublisher<ProductActivedEvent>>();
+        builder.Services.AddTransient<NotificationPublisher<ProductCreatedEvent>>();
         builder.Services.AddTransient<NotificationPublisher<ProductDisabledEvent>>();
         builder.Services.AddTransient<NotificationPublisher<ProductUpdatedEvent>>();
 
