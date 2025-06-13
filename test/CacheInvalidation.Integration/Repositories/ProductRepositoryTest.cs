@@ -69,7 +69,7 @@ namespace CacheInvalidation.Integration.Repositories
             Assert.NotNull(updatedProductData);
             Assert.Equal(updatedProductData.Name, toUpdateProduct.Name);
             Assert.Equal(updatedProductData.Description, toUpdateProduct.Description);
-            Assert.Equal(updatedProductData.Price, toUpdateProduct.Price);
+            Assert.Equal(updatedProductData.Price.Value, toUpdateProduct.Price.Value);
             var expectedSeconds = new DateTimeOffset(updatedAt).ToUnixTimeSeconds();
             var actualSeconds = new DateTimeOffset(updatedProductData.UpdatedAt.GetValueOrDefault()).ToUnixTimeSeconds();
             Assert.Equal(expectedSeconds, actualSeconds);

@@ -38,7 +38,7 @@ namespace CacheInvalidation.Api.Repositories
                 new {
                     product.Name,
                     product.Description,
-                    product.Price,
+                    product.Price.Value,
                     product.Status, 
                     product.UpdatedAt, 
                     product.DeletedAt, 
