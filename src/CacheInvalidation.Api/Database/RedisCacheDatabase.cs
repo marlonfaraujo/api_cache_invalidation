@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace CacheInvalidation.Api.Database
 {
-    public class RedisCacheDatabase
+    public class RedisCacheDatabase : ICacheDatabase
     {
         private readonly IDatabase _database;
 

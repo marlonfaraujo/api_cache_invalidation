@@ -1,13 +1,12 @@
 ﻿using CacheInvalidation.Api.Database;
 using CacheInvalidation.Api.Entities;
 using StackExchange.Redis;
-using System.Collections.Generic;
 
 namespace CacheInvalidation.Integration.Database
 {
     public class RedisCacheDatabaseTest
     {
-        private readonly RedisCacheDatabase _redis;
+        private readonly ICacheDatabase _redis;
 
         public RedisCacheDatabaseTest()
         {

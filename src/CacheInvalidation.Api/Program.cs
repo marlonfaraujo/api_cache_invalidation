@@ -1,4 +1,8 @@
-using CacheInvalidation.Api;
+using CacheInvalidation.Api.Database;
+using CacheInvalidation.Api.Dtos;
+using CacheInvalidation.Api.Repositories;
+using CacheInvalidation.Api.UseCases;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,30 +10,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
+builder.Services.AddScoped<IProductRepository, ProductDatabaseRepository>();
+builder.Services.AddScoped<ICacheDatabase, RedisCacheDatabase>();
+builder.Services.AddScoped<CreateProduct>();
 
-// Configure the HTTP request pipeline.
+builder.Services.AddSingleton<IConnectionMultiplexer>(options =>
+    ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
 
-var summaries = new[]
+
+app.MapPost("/api/products", async (ProductDto record, CreateProduct createProduct) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    var response = await createProduct.Execute(record);
+    return Results.Created(string.Empty, response);
 });
 
 app.Run();
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
