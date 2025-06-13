@@ -55,6 +55,7 @@ namespace CacheInvalidation.Api.Entities
         {
             Status = ProductStatusEnum.Actived.ToString();
             UpdatedAt = DateTime.UtcNow;
+            DeletedAt = null;
             return new ProductActivedEvent(this);
         }
 

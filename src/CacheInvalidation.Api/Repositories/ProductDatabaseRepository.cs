@@ -40,7 +40,7 @@ namespace CacheInvalidation.Api.Repositories
 
         public async Task<Product> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var sql = "select id, name, description, status, price, created_at createdAt, updated_at updatedAt from products where id = @Id and deleted_at is null";
+            var sql = "select id, name, description, status, price, created_at createdAt, updated_at updatedAt from products where id = @Id";
             var productQueryResult = await this._postgresDb.QueryFirstAsync<ProductQueryResult>(sql, cancellationToken, new { Id = id });
             return Product.Create(productQueryResult.Id, 
                 productQueryResult.Name, 
