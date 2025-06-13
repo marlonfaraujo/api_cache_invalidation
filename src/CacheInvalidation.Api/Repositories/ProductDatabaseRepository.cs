@@ -42,6 +42,10 @@ namespace CacheInvalidation.Api.Repositories
         {
             var sql = "select id, name, description, status, price, created_at createdAt, updated_at updatedAt from products where id = @Id";
             var productQueryResult = await this._postgresDb.QueryFirstAsync<ProductQueryResult>(sql, cancellationToken, new { Id = id });
+            if (productQueryResult == null)
+            {
+                return null!;
+            }
             return Product.Create(productQueryResult.Id, 
                 productQueryResult.Name, 
                 productQueryResult.Description, 

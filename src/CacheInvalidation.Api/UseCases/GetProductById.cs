@@ -14,7 +14,12 @@ namespace CacheInvalidation.Api.UseCases
 
         public async Task<Product> ExecuteAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await this._repository.GetByIdAsync(id, cancellationToken);
+            var product = await this._repository.GetByIdAsync(id, cancellationToken);
+            if (product == null)
+            {
+                throw new Exception("Product not found with id: " + id.ToString());
+            }
+            return product;
         }
     }
 }

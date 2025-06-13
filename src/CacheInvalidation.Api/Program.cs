@@ -1,6 +1,7 @@
 using CacheInvalidation.Api.Database;
 using CacheInvalidation.Api.Dtos;
 using CacheInvalidation.Api.Events;
+using CacheInvalidation.Api.Middlewares;
 using CacheInvalidation.Api.Notification;
 using CacheInvalidation.Api.Repositories;
 using CacheInvalidation.Api.UseCases;
@@ -37,7 +38,8 @@ public partial class Program
             ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
 
         var app = builder.Build();
-
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+        
         app.MapGet("/api/products", async (ListProduct listProduct, CancellationToken cancellationToken) =>
         {
             var response = await listProduct.ExecuteAsync(cancellationToken);

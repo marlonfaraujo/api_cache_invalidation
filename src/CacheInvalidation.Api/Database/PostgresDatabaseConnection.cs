@@ -25,7 +25,8 @@ namespace CacheInvalidation.Api.Database
             using var connection = new NpgsqlConnection(this._connectionString);
             var command = new CommandDefinition(sql, param, cancellationToken: cancellationToken);
             await connection.OpenAsync(cancellationToken);
-            return await connection.QueryFirstAsync<T>(command);
+            var queryResult = await connection.QueryFirstOrDefaultAsync<T>(command);
+            return queryResult;
         }
 
         public async Task<IEnumerable<T>> QueryAsync<T>(string sql, CancellationToken cancellationToken = default, object? param = null)
@@ -33,7 +34,8 @@ namespace CacheInvalidation.Api.Database
             using var connection = new NpgsqlConnection(this._connectionString);
             var command = new CommandDefinition(sql, param, cancellationToken: cancellationToken);
             await connection.OpenAsync(cancellationToken);
-            return await connection.QueryAsync<T>(command);
+            var queryResult = await connection.QueryAsync<T>(command);
+            return queryResult;
         }
     }
 }
