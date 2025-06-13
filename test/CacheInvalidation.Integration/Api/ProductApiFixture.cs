@@ -12,8 +12,8 @@ namespace CacheInvalidation.Integration.Api
         {
             var factory = new CustomWebApplicationFactory();
             Client = factory.CreateClient();
-
-            var response = Client.PostAsJsonAsync("/api/products", ProductTestData.GenerateProduct()).Result;
+            var productRequest = ProductDtoTestData.GenerateProduct();
+            var response = Client.PostAsJsonAsync("/api/products", productRequest).Result;
             var product = response.Content.ReadFromJsonAsync<Product>().Result;
             ProductId = product.Id;
         }

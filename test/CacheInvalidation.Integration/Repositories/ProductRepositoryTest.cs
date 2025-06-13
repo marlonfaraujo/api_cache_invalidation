@@ -46,7 +46,7 @@ namespace CacheInvalidation.Integration.Repositories
             var productData = await this._repository.GetAsync();
             Assert.NotNull(productData);
             Assert.NotEmpty(productData);
-            Assert.Equal(productData.Count(), length);
+            Assert.Equal(length, productData.Count());
         }
 
         [Fact(DisplayName = "Given a product registered in the database when updating its fields then an updated product should be returned")]
