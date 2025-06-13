@@ -12,25 +12,28 @@ namespace CacheInvalidation.Api.Database
             this._connectionString = configuration.GetConnectionString("DefaultConnection")!;
         }
 
-        public async Task ExecuteAsync(string sql, params object[]? param)
+        public async Task ExecuteAsync(string sql, CancellationToken cancellationToken = default, params object[]? param)
         {
             using var connection = new NpgsqlConnection(this._connectionString);
-            await connection.OpenAsync();
-            await connection.ExecuteAsync(sql, param);
+            var command = new CommandDefinition(sql, param, cancellationToken: cancellationToken);
+            await connection.OpenAsync(cancellationToken);
+            await connection.ExecuteAsync(command);
         }
 
-        public async Task<T> QueryFirstAsync<T>(string sql, object? param = null)
+        public async Task<T> QueryFirstAsync<T>(string sql, CancellationToken cancellationToken = default, object? param = null)
         {
             using var connection = new NpgsqlConnection(this._connectionString);
-            await connection.OpenAsync();
-            return await connection.QueryFirstAsync<T>(sql, param);
+            var command = new CommandDefinition(sql, param, cancellationToken: cancellationToken);
+            await connection.OpenAsync(cancellationToken);
+            return await connection.QueryFirstAsync<T>(command);
         }
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object? param = null)
+        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, CancellationToken cancellationToken = default, object? param = null)
         {
             using var connection = new NpgsqlConnection(this._connectionString);
-            await connection.OpenAsync();
-            return await connection.QueryAsync<T>(sql, param);
+            var command = new CommandDefinition(sql, param, cancellationToken: cancellationToken);
+            await connection.OpenAsync(cancellationToken);
+            return await connection.QueryAsync<T>(command);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace CacheInvalidation.Integration.Repositories
         [Fact(DisplayName = "Given several fake product objects when saving to the database then a list of registered products should be returned")]
         public async Task Given_SeveralFakeProductObjects_When_SavingToTheDatabase_Then_ListOfRegisteredProductsShouldBeReturned()
         {
-            await this._postgresDb.ExecuteAsync("delete from products", new {});
+            await this._postgresDb.ExecuteAsync("delete from products", CancellationToken.None, new {});
             int length = 5;
             for(int i = 0; i < length; i++)
             {
