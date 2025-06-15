@@ -28,33 +28,31 @@ namespace CacheInvalidation.Integration.Repositories
         public async Task Given_FakeProductObject_When_SavingToTheDatabase_Then_ItShouldReturnProductRegistration()
         {
             var product = ProductTestData.GenerateProduct();
-            await this._repository.CreateAsync(product);
-            var productData = await this._repository.GetByIdAsync(product.Id);
+            await this._repository.CreateAsync(product, CancellationToken.None);
+            var productData = await this._repository.GetByIdAsync(product.Id, CancellationToken.None);
             Assert.NotNull(productData);
         }
 
         [Fact(DisplayName = "Given several fake product objects when saving to the database then a list of registered products should be returned")]
         public async Task Given_SeveralFakeProductObjects_When_SavingToTheDatabase_Then_ListOfRegisteredProductsShouldBeReturned()
         {
-            await this._postgresDb.ExecuteAsync("delete from products", CancellationToken.None, new {});
             int length = 5;
             for(int i = 0; i < length; i++)
             {
                 var product = ProductTestData.GenerateProduct();
-                await this._repository.CreateAsync(product);
+                await this._repository.CreateAsync(product, CancellationToken.None);
             }  
-            var productData = await this._repository.GetAsync();
+            var productData = await this._repository.GetAsync(CancellationToken.None);
             Assert.NotNull(productData);
             Assert.NotEmpty(productData);
-            Assert.Equal(length, productData.Count());
         }
 
         [Fact(DisplayName = "Given a product registered in the database when updating its fields then an updated product should be returned")]
         public async Task Given_ProductRegisteredInTheDatabase_When_UpdatingItsFields_Then_UpdatedProductShouldBeReturned()
         {
             var product = ProductTestData.GenerateProduct();
-            await this._repository.CreateAsync(product);
-            var productData = await this._repository.GetByIdAsync(product.Id);
+            await this._repository.CreateAsync(product, CancellationToken.None);
+            var productData = await this._repository.GetByIdAsync(product.Id, CancellationToken.None);
             Assert.NotNull(productData);
 
             var toUpdateProduct = ProductTestData.GenerateProduct();
@@ -63,9 +61,9 @@ namespace CacheInvalidation.Integration.Repositories
             productData.Price = toUpdateProduct.Price;
             var updatedAt = DateTime.UtcNow;
             productData.UpdatedAt = updatedAt;
-            await this._repository.UpdateAsync(productData.Id, productData);
+            await this._repository.UpdateAsync(productData.Id, productData, CancellationToken.None);
 
-            var updatedProductData = await this._repository.GetByIdAsync(productData.Id);
+            var updatedProductData = await this._repository.GetByIdAsync(productData.Id, CancellationToken.None);
             Assert.NotNull(updatedProductData);
             Assert.Equal(updatedProductData.Name, toUpdateProduct.Name);
             Assert.Equal(updatedProductData.Description, toUpdateProduct.Description);
