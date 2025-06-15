@@ -59,7 +59,7 @@ namespace CacheInvalidation.Integration.Api
         [Fact(DisplayName = "Given a registered product When searching for its identifier Then it should return a non-null result")]
         public async Task Given_RegisteredProduct_When_SearchingForItsIdentifier_Then_ShouldReturnANonNullResult()
         {
-            var getResponse = await _productApiFixture.Client.GetAsync($"/api/products/${this._productApiFixture.ProductId}");
+            var getResponse = await _productApiFixture.Client.GetAsync($"/api/products/{this._productApiFixture.ProductId}");
             Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
             var productResult = getResponse.Content.ReadFromJsonAsync<Product>().Result;
             Assert.NotNull(productResult);
@@ -68,7 +68,7 @@ namespace CacheInvalidation.Integration.Api
         [Fact(DisplayName = "Given cached products When registering a new product Then this new product should be returned in the cached product search result")]
         public async Task Given_CachedProducts_When_RegisteringANewProduct_Then_ThisNewProductShouldBeReturnedInTheCachedProductSearchResult()
         {
-            var getResponse = await _productApiFixture.Client.GetAsync($"/api/products-cache");
+            var getResponse = await _productApiFixture.Client.GetAsync("/api/products-cache");
             Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
             var productItemsResult = getResponse.Content.ReadFromJsonAsync<IEnumerable<Product>>().Result;
             Assert.NotNull(productItemsResult);
@@ -79,7 +79,7 @@ namespace CacheInvalidation.Integration.Api
             Assert.Equal(HttpStatusCode.Created, postProductResponse.StatusCode);
             var newProductResult = postProductResponse.Content.ReadFromJsonAsync<Product>().Result;
 
-            var getCachedResponse = await _productApiFixture.Client.GetAsync($"/api/products-cache");
+            var getCachedResponse = await _productApiFixture.Client.GetAsync("/api/products-cache");
             Assert.Equal(HttpStatusCode.OK, getCachedResponse.StatusCode);
             var productItemsCachedResult = getCachedResponse.Content.ReadFromJsonAsync<IEnumerable<Product>>().Result;
             Assert.NotNull(productItemsCachedResult);

@@ -25,6 +25,7 @@ public partial class Program
         builder.Services.AddScoped<ListProduct>();
         builder.Services.AddScoped<ListCachedProduct>();
         builder.Services.AddScoped<UpdateProduct>();
+        builder.Services.AddScoped<RefreshProductCache>();
         builder.Services.AddTransient<INotificationHandler<ProductActivedEvent>, ProductActivedEventHandler>();
         builder.Services.AddTransient<INotificationHandler<ProductCreatedEvent>, ProductCreatedEventHandler>();
         builder.Services.AddTransient<INotificationHandler<ProductDisabledEvent>, ProductDisabledEventHandler>();
