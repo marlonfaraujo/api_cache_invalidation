@@ -33,7 +33,7 @@ public async Task<IEnumerable<Product>> ExecuteAsync(CancellationToken cancellat
 ```
 There are a few ways to invalidate the cache — the most common being to set an expiration time when writing to Redis. Alternatively, the cache can be manually invalidated.
 
-For example, when a new product is created, it won't exist in the cached data. To ensure the cache stays updated, a notification is published. This serves as a trigger to inform the cache that it needs to be refreshed with the new product.
+For example, when a new product is created, it does not yet exist in the cached data. To ensure the cache stays updated, a notification is published. This serves as a trigger to inform the cache that it needs to be refreshed with the new product.
 ```csharp
 //class src/CacheInvalidation.Api/UseCases/CreateProduct.cs
 public async Task<Product> ExecuteAsync(ProductDto dto, CancellationToken cancellationToken = default) 
