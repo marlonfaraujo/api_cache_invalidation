@@ -8,6 +8,7 @@ using CacheInvalidation.Api.Infra.Database;
 using CacheInvalidation.Api.Infra.Repositories;
 using CacheInvalidation.Api.Middlewares;
 using CacheInvalidation.Api.Notification;
+using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
 public partial class Program 
@@ -27,7 +28,7 @@ public partial class Program
         builder.Services.AddScoped<ListProduct>();
         builder.Services.AddScoped<ListCachedProduct>();
         builder.Services.AddScoped<UpdateProduct>();
-        builder.Services.AddScoped<RefreshProductCache>();
+        builder.Services.AddScoped<ResolveProductCacheInvalidation>();
         builder.Services.AddTransient<INotificationHandler<ProductActivedEvent>, ProductActivedEventHandler>();
         builder.Services.AddTransient<INotificationHandler<ProductCreatedEvent>, ProductCreatedEventHandler>();
         builder.Services.AddTransient<INotificationHandler<ProductDisabledEvent>, ProductDisabledEventHandler>();
@@ -39,6 +40,12 @@ public partial class Program
 
         builder.Services.AddSingleton<IConnectionMultiplexer>(options =>
             ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
+
+        builder.Services.Configure<CacheConfig>(
+            builder.Configuration.GetSection("CacheConfig"));
+
+        builder.Services.AddSingleton<ICacheConfig>(serviceProvider =>
+            serviceProvider.GetRequiredService<IOptions<CacheConfig>>().Value);
 
         var app = builder.Build();
         app.UseMiddleware<ExceptionHandlingMiddleware>();

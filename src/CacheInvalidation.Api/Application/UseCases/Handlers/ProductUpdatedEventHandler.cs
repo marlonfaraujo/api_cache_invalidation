@@ -1,7 +1,5 @@
-﻿using CacheInvalidation.Api.Application.UseCases;
+﻿using CacheInvalidation.Api.Application.Dtos;
 using CacheInvalidation.Api.Domain.Events;
-using CacheInvalidation.Api.Dtos;
-using CacheInvalidation.Api.Infra.Database;
 using CacheInvalidation.Api.Notification;
 using System.Text.Json;
 
@@ -9,35 +7,24 @@ namespace CacheInvalidation.Api.Application.UseCases.Handlers
 {
     public class ProductUpdatedEventHandler : INotificationHandler<ProductUpdatedEvent>
     {
-        private readonly ICacheDatabase _cacheDatabase;
-        private readonly CacheConfig _cacheConfig;
         private readonly ILogger<ProductUpdatedEventHandler> _logger;
-        private readonly RefreshProductCache _refreshProductCache;
+        private readonly ResolveProductCacheInvalidation _resolveProductCacheInvalidation;
 
-        public ProductUpdatedEventHandler(ICacheDatabase cacheDatabase, IConfiguration configuration, ILogger<ProductUpdatedEventHandler> logger, RefreshProductCache refreshProductCache)
+        public ProductUpdatedEventHandler(ILogger<ProductUpdatedEventHandler> logger, ResolveProductCacheInvalidation resolveProductCacheInvalidation)
         {
-            _cacheDatabase = cacheDatabase;
-            _cacheConfig = configuration.GetSection("CacheConfig").Get<CacheConfig>();
-            _logger = logger;
-            _refreshProductCache = refreshProductCache;
+            this._logger = logger;
+            this._resolveProductCacheInvalidation = resolveProductCacheInvalidation;
         }
 
         public async Task HandleAsync(ProductUpdatedEvent notification, CancellationToken cancellationToken = default)
         {
-            if (_cacheConfig.ItsToRefresh.GetValueOrDefault() == true)
-            {
-                await _refreshProductCache.ExecuteAsync(cancellationToken);
-            }
-            else
-            {
-                await _cacheDatabase.RemoverAsync(_cacheConfig.ProductCacheKey, cancellationToken);
-            }
-            var output = new OutboxMessage(notification.Product.Id,
+            await this._resolveProductCacheInvalidation.ExecuteAsync(cancellationToken);
+            var output = new OutputMessage(notification.Product.Id,
                 nameof(ProductUpdatedEvent).ToString(),
                 JsonSerializer.Serialize(notification),
                 DateTime.UtcNow,
                 false);
-            _logger.LogInformation($"Product updated event handled: {JsonSerializer.Serialize(output)}");
+            this._logger.LogInformation($"Product updated event handled: {JsonSerializer.Serialize(output)}");
         }
     }
 }

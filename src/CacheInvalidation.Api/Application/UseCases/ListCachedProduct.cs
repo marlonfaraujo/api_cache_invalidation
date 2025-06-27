@@ -1,7 +1,6 @@
 ﻿using CacheInvalidation.Api.Application.Abstractions;
 using CacheInvalidation.Api.Domain.Entities;
 using CacheInvalidation.Api.Domain.Repositories;
-using CacheInvalidation.Api.Dtos;
 
 namespace CacheInvalidation.Api.Application.UseCases
 {
@@ -9,13 +8,13 @@ namespace CacheInvalidation.Api.Application.UseCases
     {
         private readonly IProductRepository _repository;
         private readonly ICacheDatabase _cacheDatabase;
-        private readonly CacheConfig _cacheConfig;
+        private readonly ICacheConfig _cacheConfig;
 
-        public ListCachedProduct(IProductRepository repository, ICacheDatabase cacheDatabase, IConfiguration configuration)
+        public ListCachedProduct(IProductRepository repository, ICacheDatabase cacheDatabase, ICacheConfig cacheConfig)
         {
             _repository = repository;
             _cacheDatabase = cacheDatabase;
-            _cacheConfig = configuration.GetSection("CacheConfig").Get<CacheConfig>();
+            _cacheConfig = cacheConfig;
         }
 
         public async Task<IEnumerable<Product>> ExecuteAsync(CancellationToken cancellationToken = default)
