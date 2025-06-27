@@ -1,4 +1,5 @@
 using CacheInvalidation.Api.Application.Abstractions;
+using CacheInvalidation.Api.Application.Dtos;
 using CacheInvalidation.Api.Application.UseCases;
 using CacheInvalidation.Api.Application.UseCases.Handlers;
 using CacheInvalidation.Api.Domain.Events;

@@ -1,7 +1,7 @@
-﻿using CacheInvalidation.Api.Domain.Entities;
+﻿using CacheInvalidation.Api.Application.Dtos;
+using CacheInvalidation.Api.Domain.Entities;
 using CacheInvalidation.Api.Domain.Events;
 using CacheInvalidation.Api.Domain.Repositories;
-using CacheInvalidation.Api.Dtos;
 using CacheInvalidation.Api.Notification;
 
 namespace CacheInvalidation.Api.Application.UseCases

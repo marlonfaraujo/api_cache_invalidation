@@ -1,7 +1,7 @@
 ﻿using CacheInvalidation.Api.Domain.Entities;
 using CacheInvalidation.Api.Domain.Repositories;
-using CacheInvalidation.Api.Dtos;
 using CacheInvalidation.Api.Infra.Database;
+using CacheInvalidation.Api.Infra.Dtos;
 
 namespace CacheInvalidation.Api.Infra.Repositories
 {
