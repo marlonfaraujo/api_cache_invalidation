@@ -12,70 +12,75 @@ app.MapGet("/api/products-cache", async (ListCachedProduct listCachedProduct, Ca
 ```
 On the first request, the data is fetched from the Postgres database and cached in Redis. For subsequent requests, the data is retrieved directly from Redis, which offers significantly faster read performance for being recorded in memory.
 ```csharp
-//class src/CacheInvalidation.Api/UseCases/ListCachedProduct.cs
-public async Task<IEnumerable<Product>> ExecuteAsync(CancellationToken cancellationToken = default)
+//class src/CacheInvalidation.Api/Application/UseCases/ListCachedProduct.cs
+public async Task<IEnumerable<ProductResultDto>> ExecuteAsync(CancellationToken cancellationToken = default)
 {
-   var cachedProducts = await this._cacheDatabase.GetAsync<IEnumerable<Product>>(this._cacheConfig.ProductCacheKey, cancellationToken);
+   var cachedProducts = await _cacheDatabase.GetAsync<IEnumerable<Product>>(_cacheConfig.ProductCacheKey, cancellationToken);
    if (cachedProducts != null && cachedProducts.Any())
    {
-       return cachedProducts;
+      return GetProductsResult(cachedProducts);
    }
-
-   var products = await this._repository.GetAsync(cancellationToken);
+   var products = await _repository.GetAsync(cancellationToken);
    if (products != null && products.Any())
    {
-       await this._cacheDatabase.SetAsync(this._cacheConfig.ProductCacheKey, 
-           products, cancellationToken, TimeSpan.FromMinutes(this._cacheConfig.ExpirationTimeMinutes));
-       return products;
+      await _cacheDatabase.SetAsync(_cacheConfig.ProductCacheKey, 
+         products, cancellationToken, TimeSpan.FromMinutes(_cacheConfig.ExpirationTimeMinutes));
+      return GetProductsResult(products);
    }
-   return Enumerable.Empty<Product>();
+   return Enumerable.Empty<ProductResultDto>();
 }
 ```
 There are a few ways to invalidate the cache, the most common is to set an expiration time when writing to Redis. Other alternatively, is manually refresh the cache.
 
 For example, when a new product is created, it does not yet exist in the cached data. To ensure the cache stays updated, a notification is published. This serves as a trigger to inform the cache that it needs to be refreshed with the new product.
 ```csharp
-//class src/CacheInvalidation.Api/UseCases/CreateProduct.cs
-public async Task<Product> ExecuteAsync(ProductDto dto, CancellationToken cancellationToken = default) 
+//class src/CacheInvalidation.Api/Application/UseCases/CreateProduct.cs
+public async Task<ProductResultDto> ExecuteAsync(ProductDto dto, CancellationToken cancellationToken = default) 
 {
    var product = new Product(dto.Name, dto.Description, dto.Price);
-   await this._repository.CreateAsync(product, cancellationToken);
+   await _repository.CreateAsync(product, cancellationToken);
    var @event = product.CreateProductCreatedEvent();
-   await this._notification.ExecuteAsync(@event, cancellationToken);
-   return product;
+   await _notification.ExecuteAsync(@event, cancellationToken);
+   return new ProductResultDto(
+         product.Id.ToString(),
+         product.Name,
+         product.Description,
+         product.Status,
+         product.Price.Value,
+         product.CreatedAt,
+         product.UpdatedAt
+      );
 }
 ```
-In the event handler for product created, there are methods to either update or remove the cached data.
+In the event handler of the created product, there is an invocation to another class responsible for updating or removing the cached data.
 ```csharp
-//class src/CacheInvalidation.Api/UseCases/Handlers/ProductCreatedEventHandler.cs
+//class src/CacheInvalidation.Api/Application/UseCases/Handlers/ProductCreatedEventHandler.cs
 public async Task HandleAsync(ProductCreatedEvent notification, CancellationToken cancellationToken = default)
 {
-   if (this._cacheConfig.ItsToRefresh.GetValueOrDefault() == true)
-   {
-       await this._refreshProductCache.ExecuteAsync(cancellationToken);
-   }
-   else
-   {
-       await this._cacheDatabase.RemoverAsync(this._cacheConfig.ProductCacheKey, cancellationToken);
-   }
-   var output = new OutboxMessage(notification.Product.Id, 
-       nameof(ProductCreatedEvent).ToString(),
-       JsonSerializer.Serialize(notification),
-       DateTime.UtcNow,
-       false);
+   await this._resolveProductCacheInvalidation.ExecuteAsync(cancellationToken);
+   var output = new OutputMessage(notification.Product.Id, 
+      nameof(ProductCreatedEvent).ToString(),
+      JsonSerializer.Serialize(notification),
+      DateTime.UtcNow,
+      false);
    this._logger.LogInformation($"Product created event handled: {JsonSerializer.Serialize(output)}");
 }
 ```
 If the update strategy is used, refreshes the cache with the new product. If the removal strategy is used, the cache is cleared so that it can be repopulated on the next product listing request.
 ```csharp
-//class src/CacheInvalidation.Api/UseCases/RefreshProductCache.cs
+//class src/CacheInvalidation.Api/Application/UseCases/ResolveProductCacheInvalidation.cs
 public async Task ExecuteAsync(CancellationToken cancellationToken = default)
 {
+   if (!this._cacheConfig.ItsToRefresh)
+   {
+      await this._cacheDatabase.RemoverAsync(this._cacheConfig.ProductCacheKey, cancellationToken);
+      return;
+   }
    var products = await this._repository.GetAsync(cancellationToken);
    if (products != null && products.Any())
    {
-       await this._cacheDatabase.SetAsync(this._cacheConfig.ProductCacheKey,
-           products, cancellationToken, TimeSpan.FromMinutes(this._cacheConfig.ExpirationTimeMinutes));
+      await this._cacheDatabase.SetAsync(this._cacheConfig.ProductCacheKey,
+         products, cancellationToken, TimeSpan.FromMinutes(this._cacheConfig.ExpirationTimeMinutes));
    }
 }
 ```
