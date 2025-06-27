@@ -1,5 +1,5 @@
-﻿using CacheInvalidation.Api.Database;
-using CacheInvalidation.Api.Repositories;
+﻿using CacheInvalidation.Api.Infra.Database;
+using CacheInvalidation.Api.Infra.Repositories;
 using Microsoft.Extensions.Configuration;
 
 namespace CacheInvalidation.Integration.Repositories

@@ -1,11 +1,11 @@
-using CacheInvalidation.Api.Database;
+using CacheInvalidation.Api.Application.UseCases;
+using CacheInvalidation.Api.Application.UseCases.Handlers;
+using CacheInvalidation.Api.Domain.Events;
 using CacheInvalidation.Api.Dtos;
-using CacheInvalidation.Api.Events;
+using CacheInvalidation.Api.Infra.Database;
+using CacheInvalidation.Api.Infra.Repositories;
 using CacheInvalidation.Api.Middlewares;
 using CacheInvalidation.Api.Notification;
-using CacheInvalidation.Api.Repositories;
-using CacheInvalidation.Api.UseCases;
-using CacheInvalidation.Api.UseCases.Handlers;
 using StackExchange.Redis;
 
 public partial class Program 

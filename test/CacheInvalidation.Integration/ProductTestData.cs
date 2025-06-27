@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using CacheInvalidation.Api.Entities;
+using CacheInvalidation.Api.Domain.Entities;
 
 namespace CacheInvalidation.Integration
 {

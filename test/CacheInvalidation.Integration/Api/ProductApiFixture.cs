@@ -1,4 +1,4 @@
-﻿using CacheInvalidation.Api.Entities;
+﻿using CacheInvalidation.Api.Domain.Entities;
 using System.Net.Http.Json;
 
 namespace CacheInvalidation.Integration.Api

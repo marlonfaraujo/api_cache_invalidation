@@ -1,6 +1,8 @@
+/*
 drop database if exists developer;
 
 create database developer;
+*/
 
 create table products (
 	id uuid not null,
@@ -14,7 +16,7 @@ create table products (
 	primary key (id)
 );
 
-/*
+
 
 INSERT INTO products (id, name, description, status, price, created_at, updated_at, deleted_at) VALUES
 ('550e8400-e29b-41d4-a716-446655440000', 'Notebook Pro X', 'Notebook com 16GB RAM, SSD 512GB, i7', 'active', 5899.90, now(), now(), null),
@@ -24,4 +26,3 @@ INSERT INTO products (id, name, description, status, price, created_at, updated_
 ('990e8400-e29b-41d4-a716-446655440004', 'Cadeira Ergonômica Pro', 'Cadeira com suporte lombar e ajustes 3D', 'deleted', 1299.00, now(), now(), now());
 
 
-*/

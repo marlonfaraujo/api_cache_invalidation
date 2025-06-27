@@ -1,5 +1,5 @@
-﻿using CacheInvalidation.Api.Database;
-using CacheInvalidation.Api.Entities;
+﻿using CacheInvalidation.Api.Domain.Entities;
+using CacheInvalidation.Api.Infra.Database;
 using StackExchange.Redis;
 
 namespace CacheInvalidation.Integration.Database

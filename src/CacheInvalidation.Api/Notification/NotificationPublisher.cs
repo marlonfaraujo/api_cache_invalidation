@@ -1,4 +1,4 @@
-﻿using CacheInvalidation.Api.Events;
+﻿using CacheInvalidation.Api.Domain.Events;
 
 namespace CacheInvalidation.Api.Notification
 {
