@@ -1,4 +1,4 @@
-﻿using CacheInvalidation.Api.Domain.Entities;
+﻿using CacheInvalidation.Api.Application.Dtos;
 using System.Net.Http.Json;
 
 namespace CacheInvalidation.Integration.Api
@@ -6,7 +6,7 @@ namespace CacheInvalidation.Integration.Api
     public class ProductApiFixture : IDisposable
     {
         public HttpClient Client { get; }
-        public Guid ProductId { get; private set; }
+        public string ProductId { get; private set; }
 
         public ProductApiFixture()
         {
@@ -14,7 +14,7 @@ namespace CacheInvalidation.Integration.Api
             Client = factory.CreateClient();
             var productRequest = ProductDtoTestData.GenerateProduct();
             var response = Client.PostAsJsonAsync("/api/products", productRequest).Result;
-            var product = response.Content.ReadFromJsonAsync<Product>().Result;
+            var product = response.Content.ReadFromJsonAsync<ProductResultDto>().Result;
             ProductId = product.Id;
         }
 

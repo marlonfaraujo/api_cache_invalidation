@@ -17,13 +17,21 @@ namespace CacheInvalidation.Api.Application.UseCases
             _notification = notification;
         }
 
-        public async Task<Product> ExecuteAsync(ProductDto dto, CancellationToken cancellationToken = default) 
+        public async Task<ProductResultDto> ExecuteAsync(ProductDto dto, CancellationToken cancellationToken = default) 
         {
             var product = new Product(dto.Name, dto.Description, dto.Price);
             await _repository.CreateAsync(product, cancellationToken);
             var @event = product.CreateProductCreatedEvent();
             await _notification.ExecuteAsync(@event, cancellationToken);
-            return product;
+            return new ProductResultDto(
+                    product.Id.ToString(),
+                    product.Name,
+                    product.Description,
+                    product.Status,
+                    product.Price.Value,
+                    product.CreatedAt,
+                    product.UpdatedAt
+                );
         }
     }
 }

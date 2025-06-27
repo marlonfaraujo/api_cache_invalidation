@@ -1,4 +1,5 @@
-﻿using CacheInvalidation.Api.Domain.Entities;
+﻿using CacheInvalidation.Api.Application.Dtos;
+using CacheInvalidation.Api.Domain.Entities;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -27,7 +28,7 @@ namespace CacheInvalidation.Integration.Api
             var toUpdateProductRequest = ProductDtoTestData.GenerateProduct();
             var putResponse = await _productApiFixture.Client.PutAsJsonAsync($"/api/products/{this._productApiFixture.ProductId}", toUpdateProductRequest);
             Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
-            var productPutResult = putResponse.Content.ReadFromJsonAsync<Product>().Result;
+            var productPutResult = putResponse.Content.ReadFromJsonAsync<ProductResultDto>().Result;
             Assert.NotNull(productPutResult);
         }
 
@@ -38,7 +39,7 @@ namespace CacheInvalidation.Integration.Api
             Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
             var getResponse = await _productApiFixture.Client.GetAsync($"/api/products/{this._productApiFixture.ProductId}");
             Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
-            var productResult = getResponse.Content.ReadFromJsonAsync<Product>().Result;
+            var productResult = getResponse.Content.ReadFromJsonAsync<ProductResultDto>().Result;
             Assert.Equal(ProductStatusEnum.Disabled.ToString(), productResult.Status);
         }
 
@@ -52,7 +53,7 @@ namespace CacheInvalidation.Integration.Api
 
             var getResponse = await _productApiFixture.Client.GetAsync($"/api/products/{this._productApiFixture.ProductId}");
             Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
-            var productResultActive = getResponse.Content.ReadFromJsonAsync<Product>().Result;
+            var productResultActive = getResponse.Content.ReadFromJsonAsync<ProductResultDto>().Result;
             Assert.Equal(ProductStatusEnum.Actived.ToString(), productResultActive.Status);
         }
 
@@ -61,7 +62,7 @@ namespace CacheInvalidation.Integration.Api
         {
             var getResponse = await _productApiFixture.Client.GetAsync($"/api/products/{this._productApiFixture.ProductId}");
             Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
-            var productResult = getResponse.Content.ReadFromJsonAsync<Product>().Result;
+            var productResult = getResponse.Content.ReadFromJsonAsync<ProductResultDto>().Result;
             Assert.NotNull(productResult);
         }
 
@@ -70,21 +71,21 @@ namespace CacheInvalidation.Integration.Api
         {
             var getResponse = await _productApiFixture.Client.GetAsync("/api/products-cache");
             Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
-            var productItemsResult = getResponse.Content.ReadFromJsonAsync<IEnumerable<Product>>().Result;
+            var productItemsResult = getResponse.Content.ReadFromJsonAsync<IEnumerable<ProductResultDto>>().Result;
             Assert.NotNull(productItemsResult);
             Assert.NotEmpty(productItemsResult);
 
             var newProductRequest = ProductDtoTestData.GenerateProduct();
             var postProductResponse = await this._productApiFixture.Client.PostAsJsonAsync("/api/products", newProductRequest);
             Assert.Equal(HttpStatusCode.Created, postProductResponse.StatusCode);
-            var newProductResult = postProductResponse.Content.ReadFromJsonAsync<Product>().Result;
+            var newProductResult = postProductResponse.Content.ReadFromJsonAsync<ProductResultDto>().Result;
 
             var getCachedResponse = await _productApiFixture.Client.GetAsync("/api/products-cache");
             Assert.Equal(HttpStatusCode.OK, getCachedResponse.StatusCode);
-            var productItemsCachedResult = getCachedResponse.Content.ReadFromJsonAsync<IEnumerable<Product>>().Result;
+            var productItemsCachedResult = getCachedResponse.Content.ReadFromJsonAsync<IEnumerable<ProductResultDto>>().Result;
             Assert.NotNull(productItemsCachedResult);
             Assert.NotEmpty(productItemsCachedResult);
-            Assert.True(productItemsCachedResult.Any(product => product.Id == newProductResult.Id));
+            Assert.True(productItemsCachedResult.Any(product => product.Id.Equals(newProductResult.Id)));
         }
     }
 }

@@ -17,7 +17,7 @@ namespace CacheInvalidation.Api.Application.UseCases
             _notification = notification;
         }
 
-        public async Task<Product> ExecuteAsync(Guid id, ProductDto dto, CancellationToken cancellationToken = default)
+        public async Task<ProductResultDto> ExecuteAsync(Guid id, ProductDto dto, CancellationToken cancellationToken = default)
         {
             var product = await _repository.GetByIdAsync(id, cancellationToken);
             if (product == null)
@@ -31,7 +31,15 @@ namespace CacheInvalidation.Api.Application.UseCases
             await _repository.UpdateAsync(id, product, cancellationToken);
             var @event = product.CreateProductUpdatedEvent();
             await _notification.ExecuteAsync(@event, cancellationToken);
-            return product;
+            return new ProductResultDto(
+                    product.Id.ToString(),
+                    product.Name,
+                    product.Description,
+                    product.Status,
+                    product.Price.Value,
+                    product.CreatedAt,
+                    product.UpdatedAt
+                );
 
         }
     }

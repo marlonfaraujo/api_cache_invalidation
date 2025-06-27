@@ -1,4 +1,5 @@
 ﻿using CacheInvalidation.Api.Application.Abstractions;
+using CacheInvalidation.Api.Application.Dtos;
 using CacheInvalidation.Api.Domain.Entities;
 using CacheInvalidation.Api.Domain.Repositories;
 
@@ -17,22 +18,34 @@ namespace CacheInvalidation.Api.Application.UseCases
             _cacheConfig = cacheConfig;
         }
 
-        public async Task<IEnumerable<Product>> ExecuteAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<ProductResultDto>> ExecuteAsync(CancellationToken cancellationToken = default)
         {
             var cachedProducts = await _cacheDatabase.GetAsync<IEnumerable<Product>>(_cacheConfig.ProductCacheKey, cancellationToken);
             if (cachedProducts != null && cachedProducts.Any())
             {
-                return cachedProducts;
+                return GetProductsResult(cachedProducts);
             }
-
             var products = await _repository.GetAsync(cancellationToken);
             if (products != null && products.Any())
             {
                 await _cacheDatabase.SetAsync(_cacheConfig.ProductCacheKey, 
                     products, cancellationToken, TimeSpan.FromMinutes(_cacheConfig.ExpirationTimeMinutes));
-                return products;
+                return GetProductsResult(products);
             }
-            return Enumerable.Empty<Product>();
+            return Enumerable.Empty<ProductResultDto>();
+        }
+
+        private IEnumerable<ProductResultDto> GetProductsResult(IEnumerable<Product> products) 
+        {
+            return products.Select(product => new ProductResultDto(
+                product.Id.ToString(),
+                product.Name,
+                product.Description,
+                product.Status,
+                product.Price.Value,
+                product.CreatedAt,
+                product.UpdatedAt
+                ));
         }
     }
 }

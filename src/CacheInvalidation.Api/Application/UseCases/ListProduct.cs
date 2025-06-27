@@ -1,4 +1,4 @@
-﻿using CacheInvalidation.Api.Domain.Entities;
+﻿using CacheInvalidation.Api.Application.Dtos;
 using CacheInvalidation.Api.Domain.Repositories;
 
 namespace CacheInvalidation.Api.Application.UseCases
@@ -12,10 +12,18 @@ namespace CacheInvalidation.Api.Application.UseCases
             _repository = repository;  
         }
 
-        public async Task<IEnumerable<Product>> ExecuteAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<ProductResultDto>> ExecuteAsync(CancellationToken cancellationToken = default)
         {
             var products = await _repository.GetAsync(cancellationToken);
-            return products;
+            return products.Select(product => new ProductResultDto(
+                product.Id.ToString(), 
+                product.Name, 
+                product.Description, 
+                product.Status, 
+                product.Price.Value, 
+                product.CreatedAt, 
+                product.UpdatedAt
+                ));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using CacheInvalidation.Api.Domain.Entities;
+﻿using CacheInvalidation.Api.Application.Dtos;
 using CacheInvalidation.Api.Domain.Repositories;
 
 namespace CacheInvalidation.Api.Application.UseCases
@@ -12,14 +12,22 @@ namespace CacheInvalidation.Api.Application.UseCases
             _repository = repository;
         }
 
-        public async Task<Product> ExecuteAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<ProductResultDto> ExecuteAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var product = await _repository.GetByIdAsync(id, cancellationToken);
             if (product == null)
             {
                 throw new Exception("Product not found with id: " + id.ToString());
             }
-            return product;
+            return new ProductResultDto(
+                    product.Id.ToString(),
+                    product.Name,
+                    product.Description,
+                    product.Status,
+                    product.Price.Value,
+                    product.CreatedAt,
+                    product.UpdatedAt
+                );
         }
     }
 }
