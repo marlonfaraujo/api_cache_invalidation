@@ -1,4 +1,5 @@
-﻿using CacheInvalidation.Api.Domain.Entities;
+﻿using CacheInvalidation.Api.Application.Abstractions;
+using CacheInvalidation.Api.Domain.Entities;
 using CacheInvalidation.Api.Infra.Database;
 using StackExchange.Redis;
 

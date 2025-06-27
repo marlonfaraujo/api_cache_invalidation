@@ -1,4 +1,4 @@
-﻿namespace CacheInvalidation.Api.Infra.Database
+﻿namespace CacheInvalidation.Api.Application.Abstractions
 {
     public interface ICacheDatabase
     {

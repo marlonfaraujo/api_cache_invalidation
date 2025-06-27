@@ -1,5 +1,5 @@
 ﻿using CacheInvalidation.Api.Domain.Entities;
-using CacheInvalidation.Api.Infra.Repositories;
+using CacheInvalidation.Api.Domain.Repositories;
 
 namespace CacheInvalidation.Api.Application.UseCases
 {

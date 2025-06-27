@@ -1,5 +1,5 @@
 ﻿using CacheInvalidation.Api.Domain.Events;
-using CacheInvalidation.Api.Infra.Repositories;
+using CacheInvalidation.Api.Domain.Repositories;
 using CacheInvalidation.Api.Notification;
 
 namespace CacheInvalidation.Api.Application.UseCases

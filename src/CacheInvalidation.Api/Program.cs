@@ -1,6 +1,8 @@
+using CacheInvalidation.Api.Application.Abstractions;
 using CacheInvalidation.Api.Application.UseCases;
 using CacheInvalidation.Api.Application.UseCases.Handlers;
 using CacheInvalidation.Api.Domain.Events;
+using CacheInvalidation.Api.Domain.Repositories;
 using CacheInvalidation.Api.Dtos;
 using CacheInvalidation.Api.Infra.Database;
 using CacheInvalidation.Api.Infra.Repositories;

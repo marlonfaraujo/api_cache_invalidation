@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using CacheInvalidation.Api.Application.Abstractions;
+using StackExchange.Redis;
 using System.Text.Json;
 
 namespace CacheInvalidation.Api.Infra.Database
